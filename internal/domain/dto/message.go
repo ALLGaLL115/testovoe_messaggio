@@ -9,7 +9,7 @@ import (
 )
 
 type Message struct {
-	ID        int64     `json:"id" validate:"required"`
+	// ID        int64     `json:"id" validate:"required"`
 	Text      string    `json:"text" validate:"required"`
 	CreatedAt time.Time `json:"createdAt" validate:"required"`
 }
