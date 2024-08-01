@@ -9,8 +9,8 @@ import (
 	"syscall"
 
 	"github.com/ALLGaLL115/testovoe-messaggio/internal/config"
-	"github.com/ALLGaLL115/testovoe-messaggio/lib/logger/sl"
-	"github.com/ALLGaLL115/testovoe-messaggio/lib/storage/repetable"
+	"github.com/ALLGaLL115/testovoe-messaggio/internal/lib/logger/sl"
+	"github.com/ALLGaLL115/testovoe-messaggio/internal/lib/storage/repetable"
 
 	"github.com/jackc/pgx/v5/pgxpool"
 )

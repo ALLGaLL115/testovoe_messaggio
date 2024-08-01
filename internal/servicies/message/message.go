@@ -7,7 +7,7 @@ import (
 
 	"github.com/ALLGaLL115/testovoe-messaggio/internal/domain/dto"
 	"github.com/ALLGaLL115/testovoe-messaggio/internal/domain/models"
-	"github.com/ALLGaLL115/testovoe-messaggio/lib/logger/sl"
+	"github.com/ALLGaLL115/testovoe-messaggio/internal/lib/logger/sl"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
@@ -34,7 +34,7 @@ func NewMessageService(log *slog.Logger, messagesDB MessagesDB, pool *pgxpool.Po
 	}
 }
 
-func (service *MessageService) CreateMessage(ctx context.Context, tx pgx.Tx, message dto.Message) (int64, error) {
+func (service *MessageService) Create(ctx context.Context, message dto.Message) (int64, error) {
 	const op = "servicies.message.CreateMessage"
 
 	tx, err := service.pool.Begin(ctx)
@@ -70,7 +70,7 @@ func (service *MessageService) CreateMessage(ctx context.Context, tx pgx.Tx, mes
 
 }
 
-func (service *MessageService) GetMessageById(ctx context.Context, tx pgx.Tx, messageID int64) (models.Message, error) {
+func (service *MessageService) GetById(ctx context.Context, tx pgx.Tx, messageID int64) (models.Message, error) {
 	const op = "servicies.message.GetMessageById"
 	tx, err := service.pool.Begin(ctx)
 
@@ -98,7 +98,7 @@ func (service *MessageService) GetMessageById(ctx context.Context, tx pgx.Tx, me
 
 }
 
-func (service *MessageService) UpdateMessageByID(ctx context.Context, tx pgx.Tx, message dto.Message) (int64, error) {
+func (service *MessageService) UpdateByID(ctx context.Context, tx pgx.Tx, message dto.Message) (int64, error) {
 	const op = "servicies.message.UpdateMessageByID"
 
 	tx, err := service.pool.Begin(ctx)
@@ -135,7 +135,7 @@ func (service *MessageService) UpdateMessageByID(ctx context.Context, tx pgx.Tx,
 	return messageID, nil
 }
 
-func (service *MessageService) DeleteMessageByID(ctx context.Context, tx pgx.Tx, messageID int64) (int64, error) {
+func (service *MessageService) DeleteByID(ctx context.Context, tx pgx.Tx, messageID int64) (int64, error) {
 	const op = "servicies.message.DeleteMessageByID"
 
 	tx, err := service.pool.Begin(ctx)

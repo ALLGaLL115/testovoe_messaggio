@@ -8,8 +8,8 @@ import (
 
 	"github.com/ALLGaLL115/testovoe-messaggio/internal/domain/dto"
 	"github.com/ALLGaLL115/testovoe-messaggio/internal/domain/models"
-	"github.com/ALLGaLL115/testovoe-messaggio/lib/logger/sl"
-	"github.com/ALLGaLL115/testovoe-messaggio/lib/storage/query"
+	"github.com/ALLGaLL115/testovoe-messaggio/internal/lib/logger/sl"
+	"github.com/ALLGaLL115/testovoe-messaggio/internal/lib/storage/query"
 	"github.com/jackc/pgx/v5"
 )
 
@@ -37,9 +37,9 @@ func (m *MessageDB) CreateMessage(ctx context.Context, tx pgx.Tx, message dto.Me
 
 	q := fmt.Sprintf(`
 	INSERT INTO %s
-		(chat_id, text, created_at)
+		(text, created_at)
 	VALUES 
-		($1, $2, $3, $4)
+		($1, $2,)
 			RETURNING id;
 	`, messageTable)
 
@@ -47,7 +47,7 @@ func (m *MessageDB) CreateMessage(ctx context.Context, tx pgx.Tx, message dto.Me
 
 	var messageID int64
 
-	err := tx.QueryRow(ctx, q, message.ID, message.Text, message.CreatedAt).Scan(&messageID)
+	err := tx.QueryRow(ctx, q, message.Text, message.CreatedAt).Scan(&messageID)
 
 	if err != nil {
 		m.log.Error("failed to create message", sl.OpError(op, err))
@@ -84,7 +84,7 @@ func (m *MessageDB) GetMessageById(ctx context.Context, tx pgx.Tx, messageID int
 
 }
 
-func (m *MessageDB) UpdateMessageByID(ctx context.Context, tx pgx.Tx, message dto.Message) (int64, error) {
+func (m *MessageDB) UpdateMessageByID(ctx context.Context, tx pgx.Tx, ID uint64, message dto.Message) (int64, error) {
 	const op = "storage.message.UpdateMessageByID"
 
 	q := fmt.Sprintf(`
@@ -98,7 +98,7 @@ func (m *MessageDB) UpdateMessageByID(ctx context.Context, tx pgx.Tx, message dt
 	m.log.Debug("update message by id: ", slog.String("query", query.QueryToString(q)))
 
 	var messageID int64
-	err := tx.QueryRow(ctx, q, message.ID, message.Text).Scan(&messageID)
+	err := tx.QueryRow(ctx, q, ID, message.Text).Scan(&messageID)
 
 	if err != nil {
 		m.log.Error("failed to update a message: ", sl.OpError(op, err))
@@ -108,7 +108,7 @@ func (m *MessageDB) UpdateMessageByID(ctx context.Context, tx pgx.Tx, message dt
 	return messageID, nil
 }
 
-func (m *MessageDB) DeleteMessageByID(ctx context.Context, tx pgx.Tx, messageID int64) (int64, error) {
+func (m *MessageDB) DeleteMessageByID(ctx context.Context, tx pgx.Tx, ID int64) (int64, error) {
 	const op = "storage.message.DeleteMessageByID"
 
 	q := fmt.Sprintf(`
@@ -120,7 +120,7 @@ func (m *MessageDB) DeleteMessageByID(ctx context.Context, tx pgx.Tx, messageID 
 	m.log.Debug("delete message by id: ", slog.String("query", query.QueryToString(q)))
 
 	var messageId int64
-	err := tx.QueryRow(ctx, q, messageID).Scan(&messageId)
+	err := tx.QueryRow(ctx, q, ID).Scan(&messageId)
 
 	if err != nil {
 		m.log.Error("failed to delete message: ", sl.OpError(op, err))
